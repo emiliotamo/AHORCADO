@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>title</title>
+</head>
+<body>
+    <h1>Juego del Ahorcado</h1>
+
+    <p class="palabra-secreta" id="palabraSecreta"></p>
+
+    <p class="intentos">Intentos restantes: <span id="intentosRestantes">6</span></p>
+
+    <p class="letras-intentadas">Letras intentadas: <span id="letrasIntentadas"></span></p>
+
+    <input type="text" id="letra" maxlength="1" placeholder="Adivina una letra">
+    <button onclick="adivinarLetra()">Adivinar</button>
+
+    <div class="muñeco" id="muñeco"></div>
+
+    <p class="mensaje" id="mensaje"></p>
+
+    <script>
+        // Variables iniciales
+        const palabras = ['JAVASCRIPT', 'AHORCADO', 'COMPUTADORA', 'DESARROLLO'];
+        let palabraSecreta = palabras[Math.floor(Math.random() * palabras.length)];
+        let palabraAdivinada = Array(palabraSecreta.length).fill('_');
+        let intentosRestantes = 6;
+        let letrasIntentadas = [];
+        const partesMuñeco = ['😵', '😵👉', '😵👉👕', '😵👉👕🦵', '😵👉👕🦵🦶', '💀'];
+
+        // Mostrar guiones bajos
+        document.getElementById('palabraSecreta').textContent = palabraAdivinada.join(' ');
+
+        // Función para manejar la adivinanza de una letra
+        function adivinarLetra() {
+            const letra = document.getElementById('letra').value.toUpperCase();
+            document.getElementById('letra').value = ''; // Limpiar campo de entrada
+
+            if (letra && !letrasIntentadas.includes(letra)) {
+                letrasIntentadas.push(letra);
+
+                if (palabraSecreta.includes(letra)) {
+                    // Reemplazar guiones por la letra correcta
+                    for (let i = 0; i < palabraSecreta.length; i++) {
+                        if (palabraSecreta[i] === letra) {
+                            palabraAdivinada[i] = letra;
+                        }
+                    }
+                } else {
+                    // Restar un intento si la letra es incorrecta
+                    intentosRestantes--;
+                    document.getElementById('muñeco').textContent = partesMuñeco[6 - intentosRestantes];
+                }
+
+                // Actualizar la interfaz
+                document.getElementById('palabraSecreta').textContent = palabraAdivinada.join(' ');
+                document.getElementById('intentosRestantes').textContent = intentosRestantes;
+                document.getElementById('letrasIntentadas').textContent = letrasIntentadas.join(', ');
+
+                // Verificar si ganó o perdió
+                verificarResultado();
+            }
+        }
+
+        // Función para verificar si el jugador ha ganado o perdido
+        function verificarResultado() {
+            const mensaje = document.getElementById('mensaje');
+
+            if (palabraAdivinada.join('') === palabraSecreta) {
+                mensaje.textContent = '¡Ganaste! 🎉';
+                document.getElementById('letra').disabled = true;
+            } else if (intentosRestantes === 0) {
+                mensaje.textContent = `¡Perdiste! La palabra era: ${palabraSecreta}`;
+                mensaje.classList.add('perdido');
+                document.getElementById('letra').disabled = true;
+            }
+        }
+    </script>
+</body>
+
+</html>
